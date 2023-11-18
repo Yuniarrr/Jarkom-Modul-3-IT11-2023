@@ -474,12 +474,59 @@ subnet 10.69.4.0 netmask 255.255.255.0 {
 
 Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website [berikut](https://drive.google.com/file/d/1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1/view?usp=sharing) dengan menggunakan php 7.3. 
 
+Masukkan script berikut pada tiap PHP Worker, yaitu Lawine, Linie, dan Lugner
+
+```sh
+#!/bin/bash
+
+apt update
+apt install nginx php-fpm php7.3 apache2 unzip lynx -y
+
+mkdir /var/www/jarkom
+
+curl -L --insecure "https://drive.google.com/uc?export=download&id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1" -o granz.zip
+
+unzip granz.zip -d /var/www
+rm granz.zip
+
+mv /var/www/modul-3/* /var/www/jarkom/
+rm -rf /var/www/modul-3
+
+echo 'server {
+    listen 80;
+    root /var/www/jarkom;
+    index index.php index.html index.htm;
+    server_name _;
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+    }
+    error_log /var/log/nginx/jarkom_error.log;
+    access_log /var/log/nginx/jarkom_access.log;
+}' >/etc/nginx/sites-available/jarkom.conf
+
+ln -s /etc/nginx/sites-available/jarkom.conf /etc/nginx/sites-enabled/
+
+rm /etc/nginx/sites-enabled/default
+
+service nginx restart
+service nginx status
+
+service php7.3-fpm start
+service php7.3-fpm status
+```
+
 ## Soal 7
 
 Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
-    Lawine, 4GB, 2vCPU, dan 80 GB SSD.
-    Linie, 2GB, 2vCPU, dan 50 GB SSD.
-    Lugner 1GB, 1vCPU, dan 25 GB SSD.
+
+- Lawine, 4GB, 2vCPU, dan 80 GB SSD.
+- Linie, 2GB, 2vCPU, dan 50 GB SSD
+- Lugner 1GB, 1vCPU, dan 25 GB SSD.
+    
 aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second.
 
 ## Soal 8
