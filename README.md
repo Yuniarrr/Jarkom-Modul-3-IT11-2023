@@ -52,6 +52,94 @@
 
 Melakukan register domain berupa riegel.canyon.yyy.com untuk worker Laravel dan granz.channel.yyy.com untuk worker PHP (0) mengarah pada worker yang memiliki IP [prefix IP].x.1.
 
+script untuk setup heiter
+
+```sh
+#!/bin/bash
+
+apt update
+apt install bind9 dnsutils -y
+
+# Konfigurasi yang akan dimasukkan ke dalam file
+echo "zone \"riegel.canyon.it11.com\" {
+ 	type master;
+ 	file \"/etc/bind/zones/riegel.canyon.it11.com\";
+};
+
+zone \"granz.channel.it11.com\" {
+	type master;
+	file \"/etc/bind/zones/granz.channel.it11.com\";
+};" >/etc/bind/named.conf.local
+
+zones_folder="/etc/bind/zones"
+
+# Mengecek apakah folder sudah ada
+if [ ! -d "$zones_folder" ]; then
+  # Jika folder tidak ada, maka membuatnya
+  mkdir -p "$zones_folder"
+  echo "Folder $zones_folder telah dibuat."
+fi
+
+# Konfigurasi yang akan dimasukkan ke dalam file
+echo ";
+; BIND data file for local loopback interface
+;
+\$TTL    604800
+@       IN      SOA     riegel.canyon.it11.com. root.riegel.canyon.it11.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@           IN      NS      riegel.canyon.it11.com.
+@           IN      A       10.69.4.2 ; ip frieren laravel worker
+www         IN      CNAME   riegel.canyon.it11.com.
+" >/etc/bind/zones/riegel.canyon.it11.com
+
+# Backup existing file
+cp /etc/bind/named.conf.options /etc/bind/named.conf.options/bak
+
+# Configuration data
+echo 'options {
+    listen-on-v6 { none; };
+    directory "/var/cache/bind";
+
+    # Forwarders
+    forwarders {
+        192.168.122.1;
+    };
+
+    # If there is no answer from the forwarders, dont attempt to resolve recursively
+    forward only;
+
+    dnssec-validation no;
+
+    auth-nxdomain no;    # conform to RFC1035
+    allow-query { any; };
+};' >/etc/bind/named.conf.options
+
+# Konfigurasi yang akan dimasukkan ke dalam file
+echo ";
+; BIND data file for local loopback interface
+;
+\$TTL    604800
+@       IN      SOA     granz.channel.it11.com. root.granz.channel.it11.com. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@           IN      NS      granz.channel.it11.com.
+@           IN      A       10.69.3.1 ; ip lawine larafel worker
+www         IN      CNAME   granz.channel.it11.com.
+" >/etc/bind/zones/granz.channel.it11.com
+
+service bind9 restart
+service bind9 status
+```
+
 ## Soal 1
 
 Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
