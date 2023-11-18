@@ -599,11 +599,31 @@ Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frie
 
 Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan [quest guide](https://github.com/martuafernando/laravel-praktikum-jarkom) berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer
 
+ tampilan setelah lynx localhost:<port worker>
+  ![lynx_14](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/b7daae70-3d92-42c5-8cea-5f846fd02b88)
+
 ## Soal 15
 
 Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire.
 
   POST /auth/register
+
+  Buat file login.json yang nantinya akan dikirimkan dalam perintah /POST
+```
+echo '
+{
+    "username": "kelompokit11",
+    "password": "passwordit11"
+}
+' > /var/www/laravel-praktikum-jarkom/login.json
+```
+jalankan perintah berikut pada client
+``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.2:8001/api/auth/register ```
+
+hasil
+
+![check_regis](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/b9fc7f75-ed95-481d-a58d-287fed049648)
+
 
 ## Soal 16
 
@@ -611,15 +631,44 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 
   POST /auth/login
 
+  jalankan perintah berikut pada client
+``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.2:8001/api/auth/login ```
+hasil testing dengan htop
+
+![htop_login_8001](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/17187d7a-4145-4566-b941-b118b8ab29bb)
+
+![ab_login_8001](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/163591d7-762e-4723-a7e4-43ed393d429e)
+
+
 ## Soal 17
 
 Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire.
 
   GET /me
 
+  ```
+curl -X POST -H "Content-Type: application/json" -d @regis.json http://10.69.4.2:8001/api/auth/login > login_token.txt
+```
+kode tersebut akan menyimpan respon JSON kedalam login_token.txt
+
+hasil htop
+
+![17_htop](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/ce93af9c-4236-4230-b872-c6aabf7b8552)
+
+hasil load testing
+
+![load_test_17_8001](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/5f322900-0c61-4633-b9f0-137b54597bdd)
+
 ## Soal 18
 
 Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
+
+#aku bingung soal dokum yang ini
+
+lynx ap eisen:87
+
+![lynx_87_berhasil](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/cbbdbf62-bf72-41c3-83db-7238628bb730)
+
 
 ## Soal 19
 
