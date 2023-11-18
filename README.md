@@ -392,9 +392,7 @@ subnet 10.69.3.0 netmask 255.255.255.0 {
     range 10.69.3.64 10.69.3.80;
     option routers 10.69.3.254;
     option broadcast-address 10.69.3.255;
-    option domain-name-servers 10.69.1.3;
-    default-lease-time 180;
-    max-lease-time 5760; # 96 minutes
+    option domain-name-servers 192.168.122.1;
 }" >/etc/dhcp/dhcpd.conf
 
 rm /var/run/dhcpd.pid
@@ -407,6 +405,18 @@ service isc-dhcp-server status
 ## Soal 3
 
 Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168
+
+Tambahkan pengaturan pada Himmel sebagai DHCP Server
+
+```sh
+subnet 10.69.4.0 netmask 255.255.255.0 {
+    range 10.69.4.12 10.69.4.20;
+    range 10.69.4.160 10.69.4.168;
+    option routers 10.69.4.254;
+    option broadcast-address 10.69.4.255;
+    option domain-name-servers 192.168.122.1;
+}
+```
 
 ## Soal 4
 
