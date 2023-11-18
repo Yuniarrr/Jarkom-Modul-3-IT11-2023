@@ -761,6 +761,24 @@ location / {
 }
 ```
 
+Tambahkan script berikut pada Himmel sebagai DHCP Server pada **/etc/dhcp/dhcpd.conf**
+
+```sh
+host Revolte {
+    hardware ethernet 86:28:2c:ef:7a:81;
+    fixed-address 10.69.4.167;
+    option host-name \"Revolte\";
+}
+```
+
+Kemudian jalankan **service isc-dhcp-server restart**. Selanjutnya ubah konfigurasi pada Revolte
+
+```sh
+auto eth0
+iface eth0 inet dhcp
+hwaddress ether 86:28:2c:ef:7a:81
+```
+
 ## Soal 13
 
 Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern.
