@@ -692,17 +692,116 @@ Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 w
 
 Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
 
+Tambahkan script berikut pada Eisen sebagai Load Balancer
+
+```sh
+mkdir /etc/nginx/rahasisakita
+
+htpasswd -bc /etc/nginx/rahasisakita/htpasswd netics ajkit11
+
+echo 'upstream round_robin_auth  {
+    server 10.69.3.1; #IP Lawine
+    server 10.69.3.3; #IP linie
+    server 10.69.3.2; #IP Lugner
+}
+
+server {
+    listen 82;
+        location / {
+            auth_basic "Restricted Content";
+            auth_basic_user_file /etc/nginx/rahasisakita/htpasswd;
+            proxy_pass http://round_robin_auth;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header    Host $http_host;
+        }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/round-robin-auth
+
+ln -s /etc/nginx/sites-available/round-robin-auth /etc/nginx/sites-enabled/round-robin-auth
+
+service nginx restart
+```
+
 ## Soal 11
 
 Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id.
+
+Tambahkan script berikut pada Eisen sebagai Load Balancer
+
+```sh
+location /its {
+    rewrite ^/its(.*)$ https://www.its.ac.id$1 permanent;
+}
+```
 
 ## Soal 12
 
 Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168.
 
+Tambahkan script berikut pada Eisen sebagai Load Balancer
+
+```sh
+location / {
+    allow 127.0.0.1;
+    allow 10.69.3.69;
+    allow 10.69.3.70;
+    allow 10.69.4.167;
+    allow 10.69.4.168;
+    deny all;
+
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/rahasisakita/htpasswd;
+    proxy_pass http://round_robin_auth;
+    proxy_set_header    X-Real-IP $remote_addr;
+    proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header    Host $http_host;
+}
+```
+
 ## Soal 13
 
 Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern.
+
+Tambahkan script berikut pada Denken sebagai Database Server
+
+```sh
+#!/bin/bash
+
+apt update
+apt install mariadb-server -y
+
+service mysql start
+
+mysql <<EOF
+CREATE USER 'kelompokit11'@'%' IDENTIFIED BY 'passwordit11';
+CREATE USER 'kelompokit11'@'localhost' IDENTIFIED BY 'passwordit11';
+CREATE DATABASE dbkelompokit11;
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokit11'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokit11'@'localhost';
+FLUSH PRIVILEGES;
+quit
+EOF
+
+mysql -u kelompokit11 -p'passwordit11' <<EOF
+SHOW DATABASES;
+quit
+EOF
+
+echo '[client-server]
+
+# Import all .cnf files from configuration directory
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mariadb.conf.d/
+
+[mysqld]
+skip-networking=0
+skip-bind-address' >/etc/mysql/my.cnf
+
+service mysql restart
+```
 
 ## Soal 14
 
