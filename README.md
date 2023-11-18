@@ -144,6 +144,176 @@ service bind9 status
 
 Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
 
+- Aura (DHCP Relay)
+
+```sh
+# config for eth0
+auto eth0
+iface eth0 inet dhcp
+
+# config for eth1
+auto eth1
+iface eth1 inet static
+	address 10.69.1.254
+	netmask 255.255.255.0
+
+# config for eth2
+auto eth2
+iface eth2 inet static
+	address 10.69.2.254
+	netmask 255.255.255.0
+
+# config for eth3
+auto eth3
+iface eth3 inet static
+	address 10.69.3.254
+	netmask 255.255.255.0
+
+# config for eth4
+auto eth4
+iface eth4 inet static
+	address 10.69.4.254
+	netmask 255.255.255.0
+```
+
+- Himmel (DHCP Server)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.1.2
+	netmask 255.255.255.0
+	gateway 10.69.1.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Heiter (DNS Server)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.1.3
+	netmask 255.255.255.0
+	gateway 10.69.1.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Denken (Database Server)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.2.2
+	netmask 255.255.255.0
+	gateway 10.69.2.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Eisen (Load Balancer)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.2.3
+	netmask 255.255.255.0
+	gateway 10.69.2.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Frieren (Laravel Worker)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.4.2
+	netmask 255.255.255.0
+	gateway 10.69.4.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Flamme (Laravel Worker)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.4.3
+	netmask 255.255.255.0
+	gateway 10.69.4.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Fern (Laravel Worker)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.4.4
+	netmask 255.255.255.0
+	gateway 10.69.4.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Lawine (PHP Worker)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.3.1
+	netmask 255.255.255.0
+	gateway 10.69.3.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Linie (PHP Worker)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.3.3
+	netmask 255.255.255.0
+	gateway 10.69.3.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Lugner (PHP Worker)
+
+```sh
+auto eth0
+iface eth0 inet static
+	address 10.69.3.2
+	netmask 255.255.255.0
+	gateway 10.69.3.254
+	up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+- Revolte (Client)
+
+```sh
+auto eth0
+iface eth0 inet dhcp
+```
+
+- Richter (Client)
+
+```sh
+auto eth0
+iface eth0 inet dhcp
+```
+
+- Sein (Client)
+
+```sh
+auto eth0
+iface eth0 inet dhcp
+```
+
+- Stark (Client)
+
+```sh
+auto eth0
+iface eth0 inet dhcp
+```
+
 ## Soal 2
 
 Semua CLIENT harus menggunakan konfigurasi dari DHCP Server. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
