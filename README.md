@@ -575,6 +575,115 @@ Karena diminta untuk menuliskan grimoire, buatlah analisis hasil testing dengan 
 - Grafik request per second untuk masing masing algoritma. 
 - Analisis
 
+Tambahkan script berikut pada Eisen sebagai Load Balancer
+
+```sh
+echo 'upstream round_robin  {
+    server 10.69.3.1; #IP Lawine
+    server 10.69.3.3; #IP linie
+    server 10.69.3.2; #IP Lugner
+}
+
+server {
+    listen 81;
+
+        location /its {
+            rewrite ^/its(.*)$ https://www.its.ac.id$1 permanent;
+        }
+
+        location / {
+            proxy_pass http://round_robin;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header    Host $http_host;
+        }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/round-robin
+
+echo 'upstream generic_hash  {
+    hash $request_uri consistent;
+    server 10.69.3.1; #IP Lawine
+    server 10.69.3.3; #IP linie
+    server 10.69.3.2; #IP Lugner
+}
+
+server {
+    listen 83;
+        location /its {
+            rewrite ^/its(.*)$ https://www.its.ac.id$1 permanent;
+        }
+
+        location / {
+            proxy_pass http://generic_hash;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header    Host $http_host;
+        }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/generic-hash
+
+echo 'upstream ip_hash  {
+    ip_hash;
+    server 10.69.3.1; #IP Lawine
+    server 10.69.3.3; #IP linie
+    server 10.69.3.2; #IP Lugner
+}
+
+server {
+    listen 84;
+        location /its {
+            rewrite ^/its(.*)$ https://www.its.ac.id$1 permanent;
+        }
+
+        location / {
+            proxy_pass http://ip_hash;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header    Host $http_host;
+        }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/ip-hash
+
+echo 'upstream least_conn  {
+    least_conn;
+    server 10.69.3.1; #IP Lawine
+    server 10.69.3.3; #IP linie
+    server 10.69.3.2; #IP Lugner
+}
+
+server {
+    listen 85;
+        location /its {
+            rewrite ^/its(.*)$ https://www.its.ac.id$1 permanent;
+        }
+
+        location / {
+            proxy_pass http://least_conn;
+            proxy_set_header    X-Real-IP $remote_addr;
+            proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header    Host $http_host;
+        }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/least-conn
+
+unlink /etc/nginx/sites-enabled/default
+
+ln -s /etc/nginx/sites-available/round-robin /etc/nginx/sites-enabled/round-robin
+ln -s /etc/nginx/sites-available/generic-hash /etc/nginx/sites-enabled/generic-hash
+ln -s /etc/nginx/sites-available/ip-hash /etc/nginx/sites-enabled/ip-hash
+ln -s /etc/nginx/sites-available/least-conn /etc/nginx/sites-enabled/least-conn
+
+service nginx restart
+```
+
 ## Soal 9
 
 Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire.
