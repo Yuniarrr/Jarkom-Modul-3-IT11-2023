@@ -422,9 +422,53 @@ subnet 10.69.4.0 netmask 255.255.255.0 {
 
 Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut.
 
+Ubah pengaturan domain name servers pada Himmel sebagai DHCP Server
+
+```sh
+subnet 10.69.3.0 netmask 255.255.255.0 {
+    range 10.69.3.16 10.69.3.32;
+    range 10.69.3.64 10.69.3.80;
+    option routers 10.69.3.254;
+    option broadcast-address 10.69.3.255;
+    option domain-name-servers 10.69.1.3;
+}
+
+subnet 10.69.4.0 netmask 255.255.255.0 {
+    range 10.69.4.12 10.69.4.20;
+    range 10.69.4.160 10.69.4.168;
+    option routers 10.69.4.254;
+    option broadcast-address 10.69.4.255;
+    option domain-name-servers 10.69.1.3;
+}
+```
+
 ## Soal 5
 
 Lama waktu DHCP server meminjamkan alamat IP kepada Client yang melalui Switch3 selama 3 menit sedangkan pada client yang melalui Switch4 selama 12 menit. Dengan waktu maksimal dialokasikan untuk peminjaman alamat IP selama 96 menit 
+
+Ubah pengaturan domain name servers pada Himmel sebagai DHCP Server
+
+```sh
+subnet 10.69.3.0 netmask 255.255.255.0 {
+    range 10.69.3.16 10.69.3.32;
+    range 10.69.3.64 10.69.3.80;
+    option routers 10.69.3.254;
+    option broadcast-address 10.69.3.255;
+    option domain-name-servers 10.69.1.3;
+    default-lease-time 180;
+    max-lease-time 5760; # 96 minutes
+}
+
+subnet 10.69.4.0 netmask 255.255.255.0 {
+    range 10.69.4.12 10.69.4.20;
+    range 10.69.4.160 10.69.4.168;
+    option routers 10.69.4.254;
+    option broadcast-address 10.69.4.255;
+    option domain-name-servers 10.69.1.3;
+    default-lease-time 720; # 12 minutes
+    max-lease-time 5760; # 96 minutes
+}
+```
 
 ## Soal 6
 
