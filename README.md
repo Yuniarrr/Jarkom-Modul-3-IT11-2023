@@ -318,6 +318,92 @@ iface eth0 inet dhcp
 
 Semua CLIENT harus menggunakan konfigurasi dari DHCP Server. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
 
+Setup Aura sebagai DHCP Relay
+
+```sh
+#!/bin/bash
+
+apt update
+
+apt-get install isc-dhcp-relay -y
+
+# Konfigurasi yang akan dimasukkan ke dalam file
+echo "# Defaults for isc-dhcp-relay initscript
+# sourced by /etc/init.d/isc-dhcp-relay
+# installed at /etc/default/isc-dhcp-relay by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# What servers should the DHCP relay forward requests to?
+SERVERS=\"10.69.1.2\"
+
+# On what interfaces should the DHCP relay (dhrelay) serve DHCP requests?
+INTERFACES=\"eth1 eth2 eth3 eth4\"
+
+# Additional options that are passed to the DHCP relay daemon?
+OPTIONS=\"\"" >/etc/default/isc-dhcp-relay
+
+sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
+
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.69.0.0/16
+
+service isc-dhcp-relay restart
+service isc-dhcp-relay status
+```
+
+Setup Himmel sebagai DHCP Server
+
+```sh
+#!/bin/bash
+
+apt update
+apt install isc-dhcp-server -y
+
+# Konfigurasi yang akan dimasukkan ke dalam file
+echo "# Defaults for isc-dhcp-server (sourced by /etc/init.d/isc-dhcp-server)
+# Path to dhcpd's config file (default: /etc/dhcp/dhcpd.conf).
+#DHCPDv4_CONF=/etc/dhcp/dhcpd.conf
+#DHCPDv6_CONF=/etc/dhcp/dhcpd6.conf
+# Path to dhcpd's PID file (default: /var/run/dhcpd.pid).
+#DHCPDv4_PID=/var/run/dhcpd.pid
+#DHCPDv6_PID=/var/run/dhcpd6.pid
+# Additional options to start dhcpd with.
+#       Don't use options -cf or -pf here; use DHCPD_CONF/ DHCPD_PID instead
+#OPTIONS=\"\"
+# On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
+#       Separate multiple interfaces with spaces, e.g. \"eth0 eth1\".
+INTERFACESv4=\"eth0\"
+INTERFACESv6=\"\"" >/etc/default/isc-dhcp-server
+
+echo "subnet 10.69.1.0 netmask 255.255.255.0 {
+    option routers 10.69.1.254;
+    option broadcast-address 10.69.1.255;
+}
+
+subnet 10.69.2.0 netmask 255.255.255.0 {
+    option routers 10.69.2.254;
+    option broadcast-address 10.69.2.255;
+}
+
+subnet 10.69.3.0 netmask 255.255.255.0 {
+    range 10.69.3.16 10.69.3.32;
+    range 10.69.3.64 10.69.3.80;
+    option routers 10.69.3.254;
+    option broadcast-address 10.69.3.255;
+    option domain-name-servers 10.69.1.3;
+    default-lease-time 180;
+    max-lease-time 5760; # 96 minutes
+}" >/etc/dhcp/dhcpd.conf
+
+rm /var/run/dhcpd.pid
+
+service isc-dhcp-server restart
+
+service isc-dhcp-server status
+```
+
 ## Soal 3
 
 Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168
