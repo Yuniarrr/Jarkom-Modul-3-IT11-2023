@@ -825,7 +825,164 @@ service mysql restart
 
 Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan [quest guide](https://github.com/martuafernando/laravel-praktikum-jarkom) berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer
 
- tampilan setelah lynx localhost:<port worker>
+Lakukan install depedensi dasar yang digunakan
+```
+apt-get update
+apt-get install lynx -y
+apt-get install mariadb-client -y # dipakai untuk mengecek apakah bisa mengakses database yang dibuat di Denken
+apt-get install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg2
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+apt-get update
+```
+Kemudian lakukan instalasi kebutuhan PHP 8.0
+
+```
+apt-get install php8.0-mbstring php8.0-xml php8.0-cli php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
+apt-get install nginx -y
+service nginx start
+service php8.0-fpm start
+```
+install composer
+```
+# Install composer
+wget https://getcomposer.org/download/2.0.13/composer.phar
+chmod +x composer.phar
+mv composer.phar /usr/local/bin/composer
+```
+Lakukan git clone terhadap repository https://github.com/martuafernando/laravel-praktikum-jarkom serta jlankan composer update
+```
+# Install git 
+apt-get install git -y
+cd /var/www 
+git clone https://github.com/martuafernando/laravel-praktikum-jarkom
+cd /var/www/laravel-praktikum-jarkom 
+composer update
+```
+
+Setelah selesai jalankan kode berikut untuk melakukan konfigurasi pada worker
+```
+cd /var/www/laravel-praktikum-jarkom 
+cp .env.example .env
+echo '
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=10.69.2.2
+DB_PORT=3306
+DB_DATABASE=dbkelompokit11
+DB_USERNAME=kelompokit11
+DB_PASSWORD=passwordit11
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+' > /var/www/laravel-praktikum-jarkom/.env
+cd /var/www/laravel-praktikum-jarkom
+php artisan key:generate
+php artisan config:cache
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+php artisan jwt:secret
+php artisan config:clear
+chown -R www-data.www-data /var/www/laravel-praktikum-jarkom/storage
+
+
+echo '
+ server {
+ 	listen 8001;
+
+ 	root /var/www/laravel-praktikum-jarkom/public;
+
+ 	index index.php index.html index.htm;
+ 	server_name _;
+
+ 	location / {
+ 			try_files $uri $uri/ /index.php?$query_string;
+ 	}
+
+ 	# pass PHP scripts to FastCGI server
+ 	location ~ \.php$ {
+ 	include snippets/fastcgi-php.conf;
+ 	fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+ 	}
+
+    location ~ /\.ht {
+ 			deny all;
+ 	}
+
+    error_log /var/log/nginx/implementasi_error.log;
+    access_log /var/log/nginx/implementasi_access.log;
+ }
+' > /etc/nginx/sites-available/implementasi
+ln -s /etc/nginx/sites-available/implementasi /etc/nginx/sites-enabled/
+unlink /etc/nginx/sites-enabled/default
+
+chown -R www-data.www-data /var/www/laravel-praktikum-jarkom-main/storage
+
+service php8.0-fpm start
+service nginx restart
+```
+Untuk mengecek apakah kode sudah benar bisa menggunakan nginx -t. Pada bagian
+```
+server {
+ 	listen 8001; ...... }
+```
+portnya diganti sesuai dengan port masing masing worker. Untuk konfigurasi pada kelompok kami, kami membagi port sebagai berikut:
+8001: Frieren
+8002: Fern
+8003: Flamme
+
+Kemudian setelah melakukan konfigurasi, cek dengan menjalankan lynx localhost:<port worker> (sontoh lynx localhost:8001)
+
+Jika sudah benar maka tampilan setelah lynx localhost:<port worker> adalah sebagai berikut
   ![lynx_14](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/b7daae70-3d92-42c5-8cea-5f846fd02b88)
 
 ## Soal 15
@@ -834,7 +991,7 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 
   POST /auth/register
 
-  Buat file login.json yang nantinya akan dikirimkan dalam perintah /POST
+Buat file login.json yang nantinya akan dikirimkan dalam perintah /POST pada client
 ```
 echo '
 {
@@ -845,6 +1002,7 @@ echo '
 ```
 jalankan perintah berikut pada client
 ``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.2:8001/api/auth/register ```
+Untuk bagian ``` http://10.69.4.2:8001 ``` disesuaikan dengan ip worker:portnya yang ingin diuji. Disini sebagai contoh digunakan ip:port dari worker Frieren.
 
 hasil
 
@@ -857,9 +1015,11 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 
   POST /auth/login
 
-  jalankan perintah berikut pada client
+Jalankan perintah berikut pada client
 ``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.2:8001/api/auth/login ```
-hasil testing dengan htop
+File .JSON yang digunakan sama seperti no 15
+
+Hasil testing dengan htop
 
 ![htop_login_8001](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/17187d7a-4145-4566-b941-b118b8ab29bb)
 
@@ -872,16 +1032,16 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 
   GET /me
 
-  ```
+```
 curl -X POST -H "Content-Type: application/json" -d @regis.json http://10.69.4.2:8001/api/auth/login > login_token.txt
 ```
 kode tersebut akan menyimpan respon JSON kedalam login_token.txt
 
-hasil htop
+hasil htop saat load testing dijalankan
 
 ![17_htop](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/ce93af9c-4236-4230-b872-c6aabf7b8552)
 
-hasil load testing
+hasil load testing sesudahnya
 
 ![load_test_17_8001](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/5f322900-0c61-4633-b9f0-137b54597bdd)
 
@@ -889,9 +1049,60 @@ hasil load testing
 
 Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
 
+jalankan kode berikut pada Eisen
+```
+echo 'upstream laravel_least_conn  {
+    server 10.69.4.2:8001; #IP Frieren
+    server 10.69.4.3:8003; #IP Flamme
+    server 10.69.4.4:8002; #IP Fern
+}
+
+server {
+    listen 87;
+
+    location /app1 {
+        proxy_pass http://10.69.4.2/;
+        proxy_bind 10.69.4.2; #IP Frieren
+        rewrite ^/app1(.*)$ http://10.69.4.2/$1 permanent;
+    }
+
+    location /app2 {
+        proxy_pass http://10.69.4.3/;
+        proxy_bind 10.69.4.3; #IP Flamme
+        rewrite ^/app2(.*)$ http://10.69.4.3/$1 permanent;
+    }
+
+    location /app3 {
+        proxy_pass http://10.69.4.4/;
+        proxy_bind 10.69.4.4; #IP Fern
+        rewrite ^/app3(.*)$ http://10.69.4.4/$1 permanent;
+    }
+
+    location / {
+        proxy_pass http://laravel_least_conn;
+        proxy_set_header    X-Real-IP $remote_addr;
+        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    Host $http_host;
+    }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/proxy-bind
+
+unlink /etc/nginx/sites-enabled/default
+
+ln -s /etc/nginx/sites-available/proxy-bind /etc/nginx/sites-enabled/proxy-bind
+
+service nginx restart
+```
+
 untuk mengetest jalankan kode berikut pada client:
 ``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.2.3:87/api/auth/register ```
-maka akan muncul log seperti ini
+
+`` http://10.69.2.3`` merupakan IP dari Eisen dan ``87`` adalah port yang digunakan. Setelah dijalankan pergi ke worker laravel untuk menentukan apakah berhasil melakukan proxy bind dengan mengecek lognya. 
+
+Perintah yang digunakan untuk mengecek log adalah dengan
+``` cat /var/log/nginx/implementasi_access.log ```
 
 Log pada Frieren 
 
@@ -920,6 +1131,39 @@ Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frier
 
 sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.
 
+Edit file konfigurasi berikut pada eisen
+```
+#!/bin/bash
+echo '[lb_site]
+user = lb_user
+group = lb_user
+listen = /var/run/php8.0-fpm-lb-site.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = <edit here>
+pm.start_servers = <edit here>
+pm.min_spare_servers = <edit here>
+pm.max_spare_servers = <edit here>
+pm.process_idle_timeout = 10s
+
+;' >/etc/php/8.0/fpm/pool.d/lb.conf
+
+groupadd lb_user
+useradd -g lb_user lb_user
+
+/etc/init.d/php8.0-fpm restart
+/etc/init.d/php8.0-fpm status
+```
+kemudian jalankan testing pada tiap perubahan script. Disini sebagai contoh dilakukan percobaan pada worker Frieren dengan menjalankan kode
+```
+ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.3:8003/api/auth/register
+```
 
 script 1:
 
@@ -960,10 +1204,86 @@ pm.process_idle_timeout = 10s
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/71d628b3-6853-4681-b67b-3351e8980a37)
 
+Penjelasan
+pm.max_children: 
+Fungsi: Menentukan jumlah maksimum proses anak (child processes) yang PHP-FPM dapat buat untuk melayani permintaan.
+
+pm.start_servers:
+Fungsi: Menentukan jumlah proses anak yang akan dibuat saat PHP-FPM pertama kali dijalankan.
+
+pm.min_spare_servers:
+Fungsi: Menentukan jumlah minimum proses anak yang akan dijaga hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
+
+pm.max_spare_servers:
+Fungsi: Menentukan jumlah maksimum proses anak yang diizinkan tetap hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
+
+pada hasil testing, dapat dilihat bahwa rata-rata waktu processing semakin meningkat tiap script:
+pada script 1: 279 s
+pada script 2: 286 s
+pada script 3: 295 s
+Peningkatan rata-rata waktu pemrosesan pada skenario 2 dan 3 mungkin disebabkan oleh penggunaan sumber daya yang lebih tinggi akibat peningkatan jumlah proses anak. Karena pada script terlihat bahwa terjadi peningkatan kapasitas child processes dari tiap script.
+
 ## Soal 20
 
 Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second.
 
+Lakukan modifikasi pada kode berikut
+
+```
+echo 'upstream laravel_least_conn  {
+    server 10.69.4.2:8001; #IP Frieren
+    server 10.69.4.3:8003; #IP Flamme
+    server 10.69.4.4:8002; #IP Fern
+}
+
+server {
+    listen 87;
+
+    location /app1 {
+        proxy_pass http://10.69.4.2/;
+        proxy_bind 10.69.4.2; #IP Lawine
+        rewrite ^/app1(.*)$ http://10.69.4.2/$1 permanent;
+    }
+
+    location /app2 {
+        proxy_pass http://10.69.4.3/;
+        proxy_bind 10.69.4.3; #IP linie
+        rewrite ^/app2(.*)$ http://10.69.4.3/$1 permanent;
+    }
+
+    location /app3 {
+        proxy_pass http://10.69.4.4/;
+        proxy_bind 10.69.4.4; #IP Lugner
+        rewrite ^/app3(.*)$ http://10.69.4.4/$1 permanent;
+    }
+
+    location / {
+        proxy_pass http://laravel_least_conn;
+        proxy_set_header    X-Real-IP $remote_addr;
+        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    Host $http_host;
+    }
+
+    error_log /var/log/nginx/lb_error.log;
+    access_log /var/log/nginx/lb_access.log;
+}' >/etc/nginx/sites-available/proxy-bind
+
+unlink /etc/nginx/sites-enabled/default
+
+ln -s /etc/nginx/sites-available/proxy-bind /etc/nginx/sites-enabled/proxy-bind
+
+service nginx restart
+```
+dengan menambahkan ``Least_conn;`` seperti ini
+```
+echo 'upstream laravel_least_conn  {
+    least_conn;
+    server 10.69.4.2:8001;
+    server 10.69.4.3:8003;
+    server 10.69.4.4:8002;
+}
+```
+Hasilnya adalah sebagai berikut:
 sebelum least con
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/a9245a01-1127-463d-ad14-546c3ec6affe)
@@ -971,4 +1291,6 @@ sebelum least con
 setelah least con
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/ed71fb72-c2c4-4c07-b31f-cb8b701f8159)
+
+dari data terlihat bahwa waktu yang digunakan setelah menggunakan `` Least_conn;`` lebih sedikit dibandingkan yang digunakan daripada yang tidak.
 
