@@ -835,7 +835,7 @@ curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/ph
 sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 apt-get update
 ```
-Kemudian lakukan instalasi kebutuhan PHP 8.0
+Kemudian lakukan instalasi kebutuhan ``PHP 8.0``
 
 ```
 apt-get install php8.0-mbstring php8.0-xml php8.0-cli php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
@@ -843,14 +843,15 @@ apt-get install nginx -y
 service nginx start
 service php8.0-fpm start
 ```
-install composer
+install ``composer``
 ```
 # Install composer
 wget https://getcomposer.org/download/2.0.13/composer.phar
 chmod +x composer.phar
 mv composer.phar /usr/local/bin/composer
 ```
-Lakukan git clone terhadap repository https://github.com/martuafernando/laravel-praktikum-jarkom serta jlankan composer update
+Lakukan git clone terhadap repository https://github.com/martuafernando/laravel-praktikum-jarkom serta jalankan ``composer update``
+
 ```
 # Install git 
 apt-get install git -y
@@ -860,7 +861,8 @@ cd /var/www/laravel-praktikum-jarkom
 composer update
 ```
 
-Setelah selesai jalankan kode berikut untuk melakukan konfigurasi pada worker
+Setelah selesai jalankan kode berikut untuk melakukan konfigurasi pada ``worker``
+
 ```
 cd /var/www/laravel-praktikum-jarkom 
 cp .env.example .env
@@ -970,17 +972,19 @@ chown -R www-data.www-data /var/www/laravel-praktikum-jarkom-main/storage
 service php8.0-fpm start
 service nginx restart
 ```
-Untuk mengecek apakah kode sudah benar bisa menggunakan nginx -t. Pada bagian
+Untuk mengecek apakah kode sudah benar bisa menggunakan ``nginx -t``. Pada bagian:
+
 ```
 server {
  	listen 8001; ...... }
 ```
 portnya diganti sesuai dengan port masing masing worker. Untuk konfigurasi pada kelompok kami, kami membagi port sebagai berikut:
-8001: Frieren
-8002: Fern
-8003: Flamme
 
-Kemudian setelah melakukan konfigurasi, cek dengan menjalankan lynx localhost:<port worker> (sontoh lynx localhost:8001)
+``8001``: Frieren
+``8002``: Fern
+``8003``: Flamme
+
+Kemudian setelah melakukan konfigurasi, cek dengan menjalankan ``lynx localhost:<port worker>`` (contoh lynx localhost:8001)
 
 Jika sudah benar maka tampilan setelah lynx localhost:<port worker> adalah sebagai berikut
   ![lynx_14](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/b7daae70-3d92-42c5-8cea-5f846fd02b88)
@@ -991,7 +995,7 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 
   POST /auth/register
 
-Buat file login.json yang nantinya akan dikirimkan dalam perintah /POST pada client
+Buat file ``login.json`` yang nantinya akan dikirimkan dalam perintah ``/POST`` pada ``client``
 ```
 echo '
 {
@@ -1000,9 +1004,9 @@ echo '
 }
 ' > /var/www/laravel-praktikum-jarkom/login.json
 ```
-jalankan perintah berikut pada client
+jalankan perintah berikut pada ``client``
 ``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.2:8001/api/auth/register ```
-Untuk bagian ``` http://10.69.4.2:8001 ``` disesuaikan dengan ip worker:portnya yang ingin diuji. Disini sebagai contoh digunakan ip:port dari worker Frieren.
+Untuk bagian ``` http://10.69.4.2:8001 ``` disesuaikan dengan ``ip worker:portnya`` yang ingin diuji. Disini sebagai contoh digunakan ``ip:port`` dari worker ``Frieren``.
 
 hasil
 
@@ -1015,9 +1019,11 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 
   POST /auth/login
 
-Jalankan perintah berikut pada client
+Jalankan perintah berikut pada ``client``
+
 ``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.2:8001/api/auth/login ```
-File .JSON yang digunakan sama seperti no 15
+
+File ``.JSON`` yang digunakan sama seperti no 15
 
 Hasil testing dengan htop
 
@@ -1035,9 +1041,9 @@ Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 requ
 ```
 curl -X POST -H "Content-Type: application/json" -d @regis.json http://10.69.4.2:8001/api/auth/login > login_token.txt
 ```
-kode tersebut akan menyimpan respon JSON kedalam login_token.txt
+Kode tersebut akan menyimpan respon JSON kedalam ``login_token.txt``
 
-hasil htop saat load testing dijalankan
+Hasil htop saat load testing dijalankan
 
 ![17_htop](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/ce93af9c-4236-4230-b872-c6aabf7b8552)
 
@@ -1047,9 +1053,10 @@ hasil load testing sesudahnya
 
 ## Soal 18
 
-Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
+Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari ``Frieren``, ``Flamme``, dan ``Fern``.
 
-jalankan kode berikut pada Eisen
+jalankan kode berikut pada ``Eisen``
+
 ```
 echo 'upstream laravel_least_conn  {
     server 10.69.4.2:8001; #IP Frieren
@@ -1096,25 +1103,27 @@ ln -s /etc/nginx/sites-available/proxy-bind /etc/nginx/sites-enabled/proxy-bind
 service nginx restart
 ```
 
-untuk mengetest jalankan kode berikut pada client:
+untuk mengetest jalankan kode berikut pada ``client``:
+
 ``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.2.3:87/api/auth/register ```
 
-`` http://10.69.2.3`` merupakan IP dari Eisen dan ``87`` adalah port yang digunakan. Setelah dijalankan pergi ke worker laravel untuk menentukan apakah berhasil melakukan proxy bind dengan mengecek lognya. 
+`` http://10.69.2.3`` merupakan IP dari ``Eisen`` dan ``87`` adalah port yang digunakan. Setelah dijalankan pergi ke ``worker`` laravel untuk menentukan apakah berhasil melakukan proxy bind dengan mengecek lognya. 
 
 Perintah yang digunakan untuk mengecek log adalah dengan
+
 ``` cat /var/log/nginx/implementasi_access.log ```
 
-Log pada Frieren 
+Log pada ``Frieren`` 
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/b67bd93f-ca33-4a51-8624-36e8cb6a9e2f)
 
 
-log pada Fern 
+log pada ``Fern`` 
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/1dc8f726-e82b-4e27-b91f-9139f751f941)
 
 
-log pada Flamme 
+log pada ``Flamme ``
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/3577ee4d-419c-42ee-820f-912295a16d39)
 
@@ -1131,7 +1140,8 @@ Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frier
 
 sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.
 
-Edit file konfigurasi berikut pada eisen
+Edit file konfigurasi berikut pada ``eisen``
+
 ```
 #!/bin/bash
 echo '[lb_site]
@@ -1161,6 +1171,7 @@ useradd -g lb_user lb_user
 /etc/init.d/php8.0-fpm status
 ```
 kemudian jalankan testing pada tiap perubahan script. Disini sebagai contoh dilakukan percobaan pada worker Frieren dengan menjalankan kode
+
 ```
 ab  -n 100 -c 10 -p login.json -T application/json http://10.69.4.3:8003/api/auth/register
 ```
@@ -1204,18 +1215,15 @@ pm.process_idle_timeout = 10s
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/71d628b3-6853-4681-b67b-3351e8980a37)
 
-Penjelasan
-pm.max_children: 
-Fungsi: Menentukan jumlah maksimum proses anak (child processes) yang PHP-FPM dapat buat untuk melayani permintaan.
+Penjelasan:
 
-pm.start_servers:
-Fungsi: Menentukan jumlah proses anak yang akan dibuat saat PHP-FPM pertama kali dijalankan.
+``pm.max_children``: Menentukan jumlah maksimum proses anak (child processes) yang PHP-FPM dapat buat untuk melayani permintaan.
 
-pm.min_spare_servers:
-Fungsi: Menentukan jumlah minimum proses anak yang akan dijaga hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
+``pm.start_servers``: Menentukan jumlah proses anak yang akan dibuat saat PHP-FPM pertama kali dijalankan.
 
-pm.max_spare_servers:
-Fungsi: Menentukan jumlah maksimum proses anak yang diizinkan tetap hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
+``pm.min_spare_servers``: Menentukan jumlah minimum proses anak yang akan dijaga hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
+
+``pm.max_spare_servers``: Menentukan jumlah maksimum proses anak yang diizinkan tetap hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
 
 pada hasil testing, dapat dilihat bahwa rata-rata waktu processing semakin meningkat tiap script:
 pada script 1: 279 s
