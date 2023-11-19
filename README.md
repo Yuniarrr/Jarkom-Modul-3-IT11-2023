@@ -889,11 +889,24 @@ hasil load testing
 
 Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
 
-#aku bingung soal dokum yang ini
+untuk mengetest jalankan kode berikut pada client:
+``` ab  -n 100 -c 10 -p login.json -T application/json http://10.69.2.3:87/api/auth/register ```
+maka akan muncul log seperti ini
 
-lynx ap eisen:87
+Log pada Frieren 
 
-![lynx_87_berhasil](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/cbbdbf62-bf72-41c3-83db-7238628bb730)
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/b67bd93f-ca33-4a51-8624-36e8cb6a9e2f)
+
+
+log pada Fern 
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/1dc8f726-e82b-4e27-b91f-9139f751f941)
+
+
+log pada Flamme 
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/3577ee4d-419c-42ee-820f-912295a16d39)
+
 
 
 ## Soal 19
@@ -907,8 +920,54 @@ Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frier
 
 sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.
 
+Script 1:
+
+```
+pm = dynamic
+pm.max_children = 75
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20
+pm.process_idle_timeout = 10s
+```
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/71d628b3-6853-4681-b67b-3351e8980a37)
+
+script 2:
+
+```
+pm = dynamic
+pm.max_children = 25
+pm.start_servers = 5
+pm.min_spare_servers = 3
+pm.max_spare_servers = 10
+pm.process_idle_timeout = 10s
+```
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/035723aa-3334-4e53-bf6f-8e7068bd455a)
+
+script 3:
+
+```
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 8
+pm.min_spare_servers = 5
+pm.max_spare_servers = 15
+pm.process_idle_timeout = 10s
+```
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/74582f55-9a6c-4320-a227-b46ea39b5aef)
+
 ## Soal 20
 
 Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second.
 
+sebelum least con
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/a9245a01-1127-463d-ad14-546c3ec6affe)
+
+setelah least con
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/ed71fb72-c2c4-4c07-b31f-cb8b701f8159)
 
