@@ -920,20 +920,8 @@ Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frier
 
 sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.
 
-Script 1:
 
-```
-pm = dynamic
-pm.max_children = 75
-pm.start_servers = 10
-pm.min_spare_servers = 5
-pm.max_spare_servers = 20
-pm.process_idle_timeout = 10s
-```
-
-![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/71d628b3-6853-4681-b67b-3351e8980a37)
-
-script 2:
+script 1:
 
 ```
 pm = dynamic
@@ -946,7 +934,7 @@ pm.process_idle_timeout = 10s
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/035723aa-3334-4e53-bf6f-8e7068bd455a)
 
-script 3:
+script 2:
 
 ```
 pm = dynamic
@@ -958,6 +946,19 @@ pm.process_idle_timeout = 10s
 ```
 
 ![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/74582f55-9a6c-4320-a227-b46ea39b5aef)
+
+Script 3:
+
+```
+pm = dynamic
+pm.max_children = 75
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20
+pm.process_idle_timeout = 10s
+```
+
+![image](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/107184933/71d628b3-6853-4681-b67b-3351e8980a37)
 
 ## Soal 20
 
