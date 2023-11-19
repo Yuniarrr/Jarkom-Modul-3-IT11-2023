@@ -980,9 +980,9 @@ server {
 ```
 portnya diganti sesuai dengan port masing masing worker. Untuk konfigurasi pada kelompok kami, kami membagi port sebagai berikut:
 
-``8001``: Frieren
-``8002``: Fern
-``8003``: Flamme
+- ``8001``: Frieren
+- ``8002``: Fern
+- ``8003``: Flamme
 
 Kemudian setelah melakukan konfigurasi, cek dengan menjalankan ``lynx localhost:<port worker>`` (contoh lynx localhost:8001)
 
