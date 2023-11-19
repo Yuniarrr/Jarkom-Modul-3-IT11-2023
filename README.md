@@ -1226,9 +1226,10 @@ Penjelasan:
 ``pm.max_spare_servers``: Menentukan jumlah maksimum proses anak yang diizinkan tetap hidup oleh PHP-FPM saat tidak ada permintaan yang diterima.
 
 pada hasil testing, dapat dilihat bahwa rata-rata waktu processing semakin meningkat tiap script:
-&nbsp;&nbsp;pada script 1: 279 s
-&nbsp;&nbsp;pada script 2: 286 s
-&nbsp;&nbsp;pada script 3: 295 s
+
+- pada script 1: 279 s
+- pada script 2: 286 s
+- pada script 3: 295 s
 
 Peningkatan rata-rata waktu pemrosesan pada skenario 2 dan 3 mungkin disebabkan oleh penggunaan sumber daya yang lebih tinggi akibat peningkatan jumlah proses anak. Karena pada script terlihat bahwa terjadi peningkatan kapasitas child processes dari tiap script.
 
