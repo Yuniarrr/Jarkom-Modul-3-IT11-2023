@@ -766,7 +766,7 @@ Tambahkan script berikut pada Himmel sebagai DHCP Server pada **/etc/dhcp/dhcpd.
 ```sh
 host Revolte {
     hardware ethernet 86:28:2c:ef:7a:81;
-    fixed-address 10.69.4.167;
+    fixed-address 10.69.3.70;
     option host-name \"Revolte\";
 }
 ```
