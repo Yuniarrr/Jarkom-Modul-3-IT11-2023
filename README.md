@@ -314,6 +314,8 @@ auto eth0
 iface eth0 inet dhcp
 ```
 
+![soal 1](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/646bde83-5158-4969-858f-26c8bbb93819)
+
 ## Soal 2
 
 Semua CLIENT harus menggunakan konfigurasi dari DHCP Server. Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80
