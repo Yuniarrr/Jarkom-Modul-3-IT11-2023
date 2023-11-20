@@ -404,6 +404,8 @@ service isc-dhcp-server restart
 service isc-dhcp-server status
 ```
 
+![soal 2](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/0e1a59a9-53ac-49b5-8642-8e46baf8907e)
+
 ## Soal 3
 
 Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168
@@ -419,6 +421,8 @@ subnet 10.69.4.0 netmask 255.255.255.0 {
     option domain-name-servers 192.168.122.1;
 }
 ```
+
+![soal 3](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/9d1ebb6b-0c4d-4714-b993-f042487cc8d8)
 
 ## Soal 4
 
@@ -443,6 +447,20 @@ subnet 10.69.4.0 netmask 255.255.255.0 {
     option domain-name-servers 10.69.1.3;
 }
 ```
+
+```sh
+ping riegel.canyon.it11.com
+```
+
+![riegel](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/aa920efe-e8bf-45dd-b398-1922b6dd67dd)
+
+```sh
+ping granz.channel.it11.com
+```
+
+![granz](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/db0511fa-52f6-4859-ac2f-4455c3e2c994)
+
+![soal 4](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/8fad83fa-a5a6-47d6-9df4-936ae9163c7d)
 
 ## Soal 5
 
@@ -471,6 +489,10 @@ subnet 10.69.4.0 netmask 255.255.255.0 {
     max-lease-time 5760; # 96 minutes
 }
 ```
+
+![soal 5 switch 4](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/935dfa2e-08a0-4eaf-be52-bd786bbe5d86)
+
+![soal 5 switch 3](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/1569e03c-0d02-4aa0-bd20-0c857fdc091b)
 
 ## Soal 6
 
@@ -521,6 +543,26 @@ service php7.3-fpm start
 service php7.3-fpm status
 ```
 
+Pada salah satu client dapat melakukan
+
+```sh
+lynx 10.69.3.1
+```
+
+![lawine](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/8b2f04c0-07dc-4b31-a4a5-c80c5ee97e12)
+
+```sh
+lynx 10.69.3.3
+```
+
+![linie](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/ffd75018-13d9-45e5-a115-cedf09a4f9ef)
+
+```sh
+lynx 10.69.3.2
+```
+
+![lugner](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/181dbdc3-d683-4dbc-aa70-825a0b4db203)
+
 ## Soal 7
 
 Kepala suku dari Bredt Region memberikan resource server sebagai berikut:
@@ -568,6 +610,12 @@ ln -s /etc/nginx/sites-available/weight-round-robin /etc/nginx/sites-enabled/wei
 
 service nginx restart
 ```
+
+```sh
+ab -n 1000 -c 100 http://10.69.2.3:86/
+```
+
+![test load balancer](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/189b42d0-f1b3-43a7-8481-29a2589bfdfc)
 
 ## Soal 8
 
@@ -686,9 +734,73 @@ ln -s /etc/nginx/sites-available/least-conn /etc/nginx/sites-enabled/least-conn
 service nginx restart
 ```
 
+Untuk algoritma round robin
+
+```sh
+ab -n 200 -c 10 http://10.69.2.3:81/
+```
+
+![round robin](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/ad1fdeca-0e30-4127-8de7-ea962c0ad72f)
+
+Untuk algoritma generic hash
+
+```sh
+ab -n 200 -c 10 http://10.69.2.3:83/
+```
+
+![generic hash](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/4d6d5f82-81e1-4c01-be16-e5da66d8df04)
+
+Untuk algoritma ip hash
+
+```sh
+ab -n 200 -c 10 http://10.69.2.3:84/
+```
+
+![ip hash](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/8292fc0b-f267-456f-876a-c8b6b4c6fc17)
+
+Untuk algoritma least connection
+
+```sh
+ab -n 200 -c 10 http://10.69.2.3:85/
+```
+
+![least conn](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/7412b6cd-3310-479b-a8e1-de02402733b4)
+
+Untuk algoritma weight round robin
+
+```sh
+ab -n 200 -c 10 http://10.69.2.3:86/
+```
+
+![weight round robin](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/22e7e655-2d14-4e9c-a554-ab02cf85a229)
+
+Hasil grafik
+
+![grafik no 8](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/1ca60c28-ae13-4696-a5aa-ba8084cb813e)
+
 ## Soal 9
 
 Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire.
+
+```sh
+ab -n 100 -c 10 http://10.69.2.3:81/
+```
+
+Untuk 3 worker
+
+![3 worker](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/cd5ffbe4-bc85-470d-acc5-d23b003e4e9e)
+
+Untuk 2 worker
+
+![2 worker](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/7d09fd49-ad24-42de-8947-dbd9bcb1f2ec)
+
+Untuk 1 worker
+
+![1 worker](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/a8806c6b-5658-4a0d-8f99-1ea6d85f7285)
+
+Hasil grafik
+
+![grafik no 9](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/412001d9-07fd-4272-8ac0-22c57562055a)
 
 ## Soal 10
 
@@ -727,6 +839,16 @@ ln -s /etc/nginx/sites-available/round-robin-auth /etc/nginx/sites-enabled/round
 service nginx restart
 ```
 
+Jalankan pada salah satu client
+
+```sh
+lynx http://10.69.2.3:88/
+```
+
+![soal 10 1](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/b3f23d75-7fa6-40b1-b3f5-60b141181b84)
+
+![soal 10 2](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/87981526-ae39-4921-921a-20dbd9cac8ff)
+
 ## Soal 11
 
 Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id.
@@ -738,6 +860,14 @@ location /its {
     rewrite ^/its(.*)$ https://www.its.ac.id$1 permanent;
 }
 ```
+
+Jalankan pada salah satu client
+
+```sh
+lynx http://10.69.2.3:88/its
+```
+
+![soal 11](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/6e258480-1cb7-4abf-8714-34b7f42c8ba2)
 
 ## Soal 12
 
@@ -781,6 +911,14 @@ iface eth0 inet dhcp
 hwaddress ether 86:28:2c:ef:7a:81
 ```
 
+Jalankan pada client Stark dalam proses testing ini mempunyai ip **10.69.4.18**
+
+![soal 12](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/f3b7262b-6f05-4ec2-b9f1-55a82055baea)
+
+Jalankan pada client Revolte dengan ip **10.69.3.70**
+
+![soal 12 2](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/2324e9cd-c1b5-43bb-96db-7927092862d0)
+
 ## Soal 13
 
 Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern.
@@ -822,6 +960,14 @@ skip-bind-address' >/etc/mysql/my.cnf
 
 service mysql restart
 ```
+
+Melakukan testing dengan connect dari salah satu laravel worker ke database, dengan password **passwordit11**
+
+```sh
+mariadb --host=10.69.2.2 --port=3306 --user=kelompokit11 --password
+```
+
+![soal 13](https://github.com/Yuniarrr/Jarkom-Modul-3-IT11-2023/assets/88996914/c9957759-24ee-4aa9-9b6f-afdff01e0a95)
 
 ## Soal 14
 
